@@ -1,0 +1,21 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#124b66"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon.svg"><link rel="stylesheet" href="style.css"><title>مغسلة حميد</title></head><body>
+<header><div><h1>🧺 مغسلة حميد</h1><p>إدارة المغسلة — تعمل بدون إنترنت</p></div><button id="install" hidden>📲 تثبيت</button></header><main>
+<section class="stats"><div>👥 الزبائن<b id="customers">0</b></div><div>🧺 الطلبات<b id="orders">0</b></div><div>💰 مبيعات الأسبوع<b id="sales">0.00</b></div><div>⏳ غير المدفوع<b id="due">0.00</b></div></section>
+<section class="card"><h2>➕ تسجيل طلب جديد</h2><div class="form">
+<label>اسم الزبون<input id="name"></label><label>رقم الهاتف<input id="phone" inputmode="tel"></label>
+<label>نوع الغسيل<select id="type"><option>ملابس</option><option>حرامات</option><option>سجاد وموكيت</option><option>ستائر</option><option>فرشات</option></select></label>
+<label>تاريخ الطلب<input id="date" type="date"></label><label>يوم الطلب<input id="day" readonly></label>
+<label>وزن الغسيل (كغ)<input id="weight" type="number" step=".1"></label><label>سعر الكيلو<input id="kg" type="number" step=".01"></label>
+<label>دواء غسيل إضافي؟<select id="det"><option value="0">لا</option><option value="1">نعم</option></select></label>
+<label>سعر الدواء<input id="drug" type="number" step=".01" value="0"></label>
+<label>موعد التسليم المتوقع<input id="delivery" type="datetime-local"></label>
+<label>حالة الطلب<select id="status"><option>قيد الغسيل</option><option>جاهز</option><option>تم التسليم</option></select></label>
+<label>المبلغ المدفوع<input id="paid" type="number" step=".01" value="0"></label>
+</div><div class="total">الإجمالي: <b id="total">0.00</b> — المتبقي: <b id="balance">0.00</b></div><div class="actions"><button id="save">💾 حفظ الطلب</button><button id="clear" class="gray">تفريغ</button></div></section>
+<section class="card"><div class="head"><div><h2>📊 التقرير الأسبوعي</h2><small id="range"></small></div><div><button id="prev" class="gray">◀ السابق</button><button id="now" class="gray">هذا الأسبوع</button><button id="next" class="gray">التالي ▶</button></div></div>
+<div class="report"><div>إجمالي المبيعات<b id="rsales">0</b></div><div>المدفوع<b id="rpaid">0</b></div><div>غير المدفوع<b id="rdue">0</b></div><div>عدد الزبائن<b id="rcust">0</b></div><div>عدد الطلبات<b id="rorders">0</b></div><div>متوسط الطلب<b id="ravg">0</b></div></div>
+<div class="actions"><button id="print">🖨️ طباعة التقرير</button><button id="excel">📥 تصدير Excel</button></div></section>
+<section class="card"><div class="head"><h2>👥 الزبائن المجمّعون</h2><input id="csearch" placeholder="🔎 اسم أو هاتف"></div><div id="clist"></div></section>
+<section class="card"><div class="head"><h2>🧺 الطلبات</h2><div><input id="search" placeholder="🔎 بحث"><select id="filter"><option>كل الطلبات</option><option>قيد الغسيل</option><option>جاهز</option><option>تم التسليم</option><option>غير مدفوع</option></select></div></div><div class="table"><table><thead><tr><th>#</th><th>الزبون</th><th>الهاتف</th><th>النوع</th><th>الوزن</th><th>الإجمالي</th><th>المدفوع</th><th>المتبقي</th><th>الحالة</th><th>إجراء</th></tr></thead><tbody id="rows"></tbody></table></div></section>
+<section class="card"><h2>💾 نسخة احتياطية</h2><p>البيانات محفوظة على الجوال. خذ نسخة دورية.</p><button id="backup">📤 حفظ نسخة</button><label class="file">📥 استعادة نسخة<input id="restore" type="file" accept=".json"></label></section>
+</main><div id="toast"></div><script src="app.js"></script></body></html>
