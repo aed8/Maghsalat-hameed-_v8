@@ -18,7 +18,40 @@ function messageFor(o){return `🧺 مغسلة حميد\nأهلاً ${o.name}، 
 function sendWhatsApp(id){let o=orders.find(x=>x.id==id);if(!o)return;let p=pn(o.phone);if(!p)return alert("لا يوجد رقم هاتف للزبون.");p=p.startsWith("0")?"972"+p.slice(1):p;window.open("https://wa.me/"+p+"?text="+encodeURIComponent(messageFor(o)),"_blank")}
 async function shareOrder(id){let o=orders.find(x=>x.id==id);if(!o)return;let t=messageFor(o);if(navigator.share){try{await navigator.share({title:"فاتورة مغسلة حميد",text:t})}catch(e){}}else{try{await navigator.clipboard.writeText(t);toast("تم نسخ الرسالة ✅")}catch(e){prompt("انسخ الرسالة:",t)}}}
 function receipt(id){let o=orders.find(x=>x.id==id),w=window.open("","_blank");if(!w)return;w.document.write(`<html dir=rtl><meta charset=utf-8><body style="font-family:Arial;padding:25px"><h2>🧺 مغسلة حميد</h2><p>رقم الطلب: ${o.id}</p><p>الزبون: ${esc(o.name)}</p><p>الهاتف: ${esc(o.phone)}</p><p>النوع: ${esc(o.type)}</p><p>التاريخ: ${o.orderDate}</p><p>الإجمالي: ${m(o.total)}</p><p>المدفوع: ${m(o.paid)}</p><p>المتبقي: ${m(o.balance)}</p><p>الحالة: ${esc(o.status)}</p><button onclick=print()>🖨️ طباعة</button></body></html>`);w.document.close()}
-function excel(){let s=stats(),h=`<html><meta charset=utf-8><body dir=rtl><h2>مغسلة حميد - التقرير الأسبوعي</h2><p>${di(s.w.s)} إلى ${di(s.w.e)}</p><table border=1><tr><th>رقم</th><th>الزبون</th><th>الهاتف</th><th>النوع</th><th>التاريخ</th><th>الوزن</th><th>الإجمالي</th><th>المدفوع</th><th>المتبقي</th><th>الحالة</th></tr>`+s.a.map(o=>`<tr><td>${o.id}</td><td>${esc(o.name)}</td><td>${esc(o.phone)}</td><td>${esc(o.type)}</td><td>${o.orderDate}</td><td>${o.w}</td><td>${m(o.total)}</td><td>${m(o.paid)}</td><td>${m(o.balance)}</td><td>${esc(o.status)}</td></tr>`).join("")+`</table><br><table border=1><tr><th>إجمالي المبيعات</th><th>المدفوع</th><th>غير المدفوع</th><th>الزبائن</th><th>الطلبات</th></tr><tr><td>${m(s.s)}</td><td>${m(s.p)}</td><td>${m(s.d)}</td><td>${s.c}</td><td>${s.a.length}</td></tr></table></body></html>`;download(h,"تقرير-مغسلة-حميد.xls","application/vnd.ms-excel")}
+function excel(){
+  const s=stats();
+  const rows=[
+    ["مغسلة حميد - التقرير الأسبوعي"],
+    ["الفترة",di(s.w.s),di(s.w.e)],
+    [],
+    ["رقم الطلب","الزبون","الهاتف","النوع","التاريخ","الوزن (كغ)","الإجمالي","المدفوع","المتبقي","الحالة"]
+  ];
+  s.a.forEach(o=>rows.push([o.id,o.name,o.phone,o.type,o.orderDate,o.w,o.total,o.paid,o.balance,o.status]));
+  rows.push([]);
+  rows.push(["ملخص"]);
+  rows.push(["إجمالي المبيعات",s.s]);
+  rows.push(["المدفوع",s.p]);
+  rows.push(["غير المدفوع",s.d]);
+  rows.push(["عدد الزبائن",s.c]);
+  rows.push(["عدد الطلبات",s.a.length]);
+
+  // Excel 2003 SpreadsheetML: a genuine Excel workbook XML format.
+  const cell=v=>`<Cell><Data ss:Type="${typeof v==="number"&&isFinite(v)?"Number":"String"}">${xml(v)}</Data></Cell>`;
+  const row=r=>`<Row>${r.map(cell).join("")}</Row>`;
+  const xmlbook=`<?xml version="1.0" encoding="UTF-8"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
+ <Worksheet ss:Name="التقرير الأسبوعي"><Table>${rows.map(row).join("")}</Table></Worksheet>
+</Workbook>`;
+  download("\ufeff"+xmlbook,"تقرير-مغسلة-حميد.xls","application/vnd.ms-excel;charset=utf-8");
+  toast("تم إنشاء ملف Excel ✅");
+}
+function xml(v){
+  return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&apos;");
+}
 function download(x,n,t){let a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+x],{type:t}));a.download=n;a.click()}
 function backup(){download(JSON.stringify({version:8,orders},null,2),"نسخة-مغسلة-حميد.json","application/json")}
 function toast(x){$("toast").textContent=x;$("toast").style.display="block";setTimeout(()=>$("toast").style.display="none",1800)}
